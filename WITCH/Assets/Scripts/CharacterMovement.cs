@@ -16,7 +16,7 @@ public class CharacterMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        Cursor.visible = false;
     }
 
     // Update is called once per frame
@@ -24,12 +24,16 @@ public class CharacterMovement : MonoBehaviour
     {
         if (Input.GetKey("d"))
         {
-            Body.velocity = Vector2.right * Speed;
+            Vector2 CurrentSpeed = Body.velocity;
+            CurrentSpeed.x = Speed;
+            Body.velocity = CurrentSpeed;
         }
 
         if (Input.GetKey("a"))
         {
-            Body.velocity = Vector2.left * Speed;
+            Vector2 CurrentSpeed = Body.velocity;
+            CurrentSpeed.x = -Speed;
+            Body.velocity = CurrentSpeed;
         }
     }
     void Update()
