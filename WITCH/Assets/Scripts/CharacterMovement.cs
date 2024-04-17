@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CharacterMovement : MonoBehaviour
@@ -8,10 +9,12 @@ public class CharacterMovement : MonoBehaviour
     public float WallJumpHeight = 20;
     public float WallCling = 0.25f;
     
-    // Timers. CoyoteTimer is used for Coyote Time (A short grace period where you can still jump after walking off a platform) and JumpCooldown is used to prevent unintended double jumping.
+    // Timers.
     private float CoyoteTimer = 0.25f;
     private float JumpCooldown = 0f;
     private float MovingCooldown = 0f;
+    
+    private bool JustWallJumped = false;
     
     // References used for player movement and checks.
     public Rigidbody2D Body;
@@ -23,17 +26,23 @@ public class CharacterMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        Vector2 CurrentSpeed = Body.velocity;
+
         if (Input.GetKey("d") && MovingCooldown < 0)
         {
-            Vector2 CurrentSpeed = Body.velocity;
+            JustWallJumped = false;
             CurrentSpeed.x = Speed;
             Body.velocity = CurrentSpeed;
         }
-
-        if (Input.GetKey("a") && MovingCooldown < 0)
+        else if (Input.GetKey("a") && MovingCooldown < 0)
         {
-            Vector2 CurrentSpeed = Body.velocity;
+            JustWallJumped = false;
             CurrentSpeed.x = -Speed;
+            Body.velocity = CurrentSpeed;
+        }
+        else if (!JustWallJumped || Grounded())
+        {
+            CurrentSpeed.x = 0;
             Body.velocity = CurrentSpeed;
         }
     }
@@ -57,6 +66,7 @@ public class CharacterMovement : MonoBehaviour
             }
             else if (TouchingLeftWall())
             {
+                JustWallJumped = true;
                 VelocityReset();
                 Body.AddForce((Vector2.up + Vector2.right) * WallJumpHeight, ForceMode2D.Impulse);
                 JumpCooldown = 0.25f;
@@ -64,6 +74,7 @@ public class CharacterMovement : MonoBehaviour
             }
             else if (TouchingRightWall())
             {
+                JustWallJumped = true;
                 VelocityReset();
                 Body.AddForce((Vector2.up + Vector2.left) * WallJumpHeight, ForceMode2D.Impulse);
                 JumpCooldown = 0.25f;
@@ -93,7 +104,7 @@ public class CharacterMovement : MonoBehaviour
         }
         else
         {
-            PlayerPhysics.friction = 200;
+            PlayerPhysics.friction = 0;
             Body.gravityScale = 2;
         }
 
