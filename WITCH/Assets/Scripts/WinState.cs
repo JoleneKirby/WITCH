@@ -6,12 +6,14 @@ using UnityEngine.SceneManagement;
 
 public class WinState : MonoBehaviour
 {
-    public TextMeshProUGUI WinnerText;
+    public TextMeshProUGUI WinnerText1;
+    public TextMeshProUGUI WinnerText2;
 
-    private IEnumerator OnTriggerEnter(Collider other)
+    private IEnumerator OnTriggerEnter2D(Collider2D other)
     {
         GameObject.FindFirstObjectByType<Pausing>();
-        WinnerText.color = new Color(0.75f, 1, 0, 1);
+        WinnerText1.color = new Color(0.5f, 0.5f, 0.5f, 1);
+        WinnerText2.color = new Color(1, 0, 0, 1);
         yield return new WaitForSeconds(3);
         SceneManager.LoadScene("Main Menu");
         Cursor.lockState = CursorLockMode.None;
